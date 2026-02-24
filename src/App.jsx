@@ -74,7 +74,7 @@ const Header = ({ currentPage, setCurrentPage }) => {
 					</div>
 
 					{/* Desktop Navigation */}
-					<nav className="hidden lg:flex items-center space-x-8">
+					<nav className="hidden lg:flex items-center space-x-5">
 						{navigation.map((item) => (
 							<button
 								key={item.id}
@@ -92,10 +92,10 @@ const Header = ({ currentPage, setCurrentPage }) => {
 
 					{/* CTA Buttons */}
 					<div className="hidden lg:flex items-center space-x-4">
-						<button className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-medium py-3 px-6 rounded-lg transition-all duration-200">
+						<button className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-medium py-1 px-3 rounded-lg transition-all duration-200">
 							Apply Now
 						</button>
-						<button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200">
+						<button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1 px-3 rounded-lg transition-colors duration-200">
 							Student Portal
 						</button>
 					</div>
@@ -141,7 +141,7 @@ const Header = ({ currentPage, setCurrentPage }) => {
 const HomePage = () => (
 	<div>
 		{/* Hero Section */}
-		<section className="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white py-24">
+		<section className="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white py-20">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="grid lg:grid-cols-2 gap-12 items-center">
 					<div>
