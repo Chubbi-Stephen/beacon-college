@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Beacon University - React Demo</title>
+		<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+		<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+		<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<script>
+			tailwind.config = {
+				theme: {
+					extend: {
+						fontFamily: {
+							heading: ["Inter", "system-ui", "sans-serif"],
+						},
+						animation: {
+							"fade-in-left": "fadeInLeft 0.8s ease-out",
+							"fade-in-right": "fadeInRight 0.8s ease-out",
+							float: "float 3s ease-in-out infinite",
+							"pulse-slow": "pulse 3s ease-in-out infinite",
+						},
+					},
+				},
+			};
+		</script>
+		<style>
+			@keyframes fadeInLeft {
+				from {
+					opacity: 0;
+					transform: translateX(-30px);
+				}
+				to {
+					opacity: 1;
+					transform: translateX(0);
+				}
+			}
+			@keyframes fadeInRight {
+				from {
+					opacity: 0;
+					transform: translateX(30px);
+				}
+				to {
+					opacity: 1;
+					transform: translateX(0);
+				}
+			}
+			@keyframes float {
+				0%,
+				100% {
+					transform: translateY(0px);
+				}
+				50% {
+					transform: translateY(-10px);
+				}
+			}
+			.gradient-animate {
+				background: linear-gradient(-45deg, #1e40af, #3b82f6, #06b6d4, #10b981);
+				background-size: 400% 400%;
+				animation: gradientShift 8s ease infinite;
+			}
+			@keyframes gradientShift {
+				0% {
+					background-position: 0% 50%;
+				}
+				50% {
+					background-position: 100% 50%;
+				}
+				100% {
+					background-position: 0% 50%;
+				}
+			}
+			.hover-lift:hover {
+				transform: translateY(-5px);
+			}
+			.hover-scale:hover {
+				transform: scale(1.05);
+			}
+		</style>
+	</head>
+	<body>
+		<div id="root"></div>
+
+		<script type="text/babel">
+			const { useState, useEffect } = React;
+
+			// Main App Component
+			const App = () => {
+				const [currentPage, setCurrentPage] = useState("home");
+
+				const renderPage = () => {
+					switch (currentPage) {
+						case "home":
+							return <HomePage />;
+						case "about":
+							return <AboutPage />;
+						case "schools":
+							return <SchoolsPage />;
+						case "research":
+							return <ResearchPage />;
+						case "admissions":
+							return <AdmissionsPage />;
+						case "student-life":
+							return <StudentLifePage />;
+						case "news":
+							return <NewsPage />;
+						case "contact":
+							return <ContactPage />;
+						default:
+							return <HomePage />;
+					}
+				};
+
+				return (
+					<div className="min-h-screen bg-white">
+						<Header currentPage={currentPage} setCurrentPage={setCurrentPage} />
+						<main>{renderPage()}</main>
+						<Footer />
+						<Chatbot />
+					</div>
+				);
+			};
+
+			// Header Component
+			const Header = ({ currentPage, setCurrentPage }) => {
+				const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+				const navigation = [
+					{ name: "Home", id: "home" },
+					{ name: "About", id: "about" },
+					{ name: "Schools", id: "schools" },
+					{ name: "Research", id: "research" },
+					{ name: "Admissions", id: "admissions" },
+					{ name: "Student Life", id: "student-life" },
+					{ name: "News", id: "news" },
+					{ name: "Contact", id: "contact" },
+				];
+
+				return (
+					<header className="bg-white shadow-lg sticky top-0 z-50">
+						<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+							<div className="flex justify-between items-center py-4">
+								{/* Logo */}
+								<div
+									className="flex items-center space-x-3 cursor-pointer"
+									onClick={() => setCurrentPage("home")}
+								>
+									<div className="w-12 h-12 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 rounded-lg flex items-center justify-center">
+										<span className="text-white font-bold text-xl">B</span>
+									</div>
+									<div>
+										<h1 className="text-xl font-bold text-gray-900">
+											Beacon University
+										</h1>
+										<p className="text-sm text-gray-600">
+											Health • Science • Technology
+										</p>
+									</div>
+								</div>
+
+								{/* Desktop Navigation */}
+								<nav className="hidden lg:flex items-center space-x-8">
+									{navigation.map((item) => (
+										<button
+											key={item.id}
+											onClick={() => setCurrentPage(item.id)}
+											className={`font-medium transition-colors duration-200 ${
+												currentPage === item.id
+													? "text-blue-600"
+													: "text-gray-700 hover:text-blue-600"
+											}`}
+										>
+											{item.name}
+										</button>
+									))}
+								</nav>
+
+								{/* CTA Buttons */}
+								<div className="hidden lg:flex items-center space-x-4">
+									<button className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-medium py-3 px-6 rounded-lg transition-all duration-200">
+										Apply Now
+									</button>
+									<button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200">
+										Student Portal
+									</button>
+								</div>
+
+								{/* Mobile Menu Button */}
+								<button
+									className="lg:hidden p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100"
+									onClick={() => setIsMenuOpen(!isMenuOpen)}
+								>
+									{isMenuOpen ? "✕" : "☰"}
+								</button>
+							</div>
+
+							{/* Mobile Navigation */}
+							{isMenuOpen && (
+								<div className="lg:hidden py-4 border-t border-gray-200">
+									<nav className="space-y-2">
+										{navigation.map((item) => (
+											<button
+												key={item.id}
+												onClick={() => {
+													setCurrentPage(item.id);
+													setIsMenuOpen(false);
+												}}
+												className={`block w-full text-left py-2 px-4 rounded-md font-medium transition-colors duration-200 ${
+													currentPage === item.id
+														? "text-blue-600 bg-blue-50"
+														: "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+												}`}
+											>
+												{item.name}
+											</button>
+										))}
+									</nav>
+								</div>
+							)}
+						</div>
+					</header>
+				);
+			};
+
+			// HomePage Component
+			const HomePage = () => (
+				<div>
+					{/* Hero Section */}
+					<section className="gradient-animate text-white py-24">
+						<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+							<div className="grid lg:grid-cols-2 gap-12 items-center min-h-[80vh]">
+								<div>
+									<h1 className="text-5xl lg:text-7xl font-bold mb-6 leading-tight font-heading animate-fade-in-left">
+										Advancing
+										<span className="block text-green-300">
+											Health, Science
+										</span>
+										<span className="block">& Technology</span>
+									</h1>
+									<p
+										className="text-xl text-blue-100 mb-8 leading-relaxed animate-fade-in-left"
+										style={{ animationDelay: "0.2s" }}
+									>
+										Join a world-class institution where innovation meets
+										excellence. Shape the future through groundbreaking
+										research, exceptional education, and global impact.
+									</p>
+									<div
+										className="flex flex-col sm:flex-row gap-4 animate-fade-in-left"
+										style={{ animationDelay: "0.4s" }}
+									>
+										<button className="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 hover-lift hover:shadow-2xl group">
+											Apply Now
+											<span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">
+												→
+											</span>
+										</button>
+										<button className="border-2 border-white text-white hover:bg-white hover:text-blue-600 font-medium py-3 px-6 rounded-lg transition-all duration-300 hover-lift">
+											Explore Programs
+										</button>
+									</div>
+								</div>
+								<div
+									className="relative animate-fade-in-right"
+									style={{ animationDelay: "0.6s" }}
+								>
+									<div className="absolute inset-0 bg-gradient-to-br from-green-400/20 to-blue-300/20 rounded-full animate-pulse-slow"></div>
+									<div className="relative bg-gradient-to-br from-green-400 to-blue-300 rounded-2xl h-96 flex items-center justify-center shadow-2xl hover-scale animate-float">
+										<span className="text-white text-6xl">🎓</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					{/* Stats Section */}
+					<section className="py-16 bg-white">
+						<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+							<div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+								{[
+									{ number: "15,000+", label: "Students", icon: "👥" },
+									{ number: "500+", label: "Faculty", icon: "🏆" },
+									{ number: "50+", label: "Countries", icon: "🌍" },
+									{ number: "200+", label: "Programs", icon: "📚" },
+								].map((stat, index) => (
+									<div
+										key={index}
+										className="text-center hover-scale transition-transform duration-300"
+									>
+										<div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 hover-scale">
+											<span className="text-3xl">{stat.icon}</span>
+										</div>
+										<div className="text-3xl font-bold text-gray-900 mb-2">
+											{stat.number}
+										</div>
+										<div className="text-gray-600">{stat.label}</div>
+									</div>
+								))}
+							</div>
+						</div>
+					</section>
+				</div>
+			);
+
+			// About Page Component (truncated for demo)
+			const AboutPage = () => (
+				<div>
+					<section className="py-24 bg-white">
+						<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+							<div className="text-center mb-16">
+								<p className="text-blue-600 font-medium text-sm uppercase tracking-wide mb-2">
+									About Beacon University
+								</p>
+								<h1 className="text-4xl font-bold text-gray-900 mb-4">
+									Pioneering Excellence in Education
+								</h1>
+								<p className="text-lg text-gray-600 max-w-3xl mx-auto">
+									For over 75 years, Beacon University has been at the forefront
+									of higher education, combining academic excellence with
+									groundbreaking research and innovation.
+								</p>
+							</div>
+
+							{/* Mission, Vision, Values */}
+							<div className="grid lg:grid-cols-3 gap-8">
+								<div className="text-center hover-lift transition-transform duration-300">
+									<div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+										<span className="text-3xl">🎯</span>
+									</div>
+									<h3 className="text-xl font-semibold text-gray-900 mb-4">
+										Our Mission
+									</h3>
+									<p className="text-gray-600">
+										To advance knowledge through innovative research, provide
+										transformative education, and prepare leaders who will
+										address the world's most pressing challenges.
+									</p>
+								</div>
+
+								<div className="text-center hover-lift transition-transform duration-300">
+									<div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+										<span className="text-3xl">🔭</span>
+									</div>
+									<h3 className="text-xl font-semibold text-gray-900 mb-4">
+										Our Vision
+									</h3>
+									<p className="text-gray-600">
+										To be the world's leading institution for interdisciplinary
+										education and research, fostering innovation that improves
+										lives and creates a sustainable future.
+									</p>
+								</div>
+
+								<div className="text-center hover-lift transition-transform duration-300">
+									<div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+										<span className="text-3xl">⭐</span>
+									</div>
+									<h3 className="text-xl font-semibold text-gray-900 mb-4">
+										Our Values
+									</h3>
+									<p className="text-gray-600">
+										Excellence, Innovation, Integrity, Diversity, Collaboration,
+										and Social Responsibility guide everything we do.
+									</p>
+								</div>
+							</div>
+						</div>
+					</section>
+				</div>
+			);
+
+			// Schools Page Component
+			const SchoolsPage = () => (
+				<div className="py-24 bg-gray-50">
+					<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+						<div className="text-center mb-16">
+							<h1 className="text-4xl font-bold text-gray-900 mb-4">
+								Our Schools & Departments
+							</h1>
+							<p className="text-lg text-gray-600 max-w-3xl mx-auto">
+								Discover world-class education across three premier schools.
+							</p>
+						</div>
+						<div className="grid md:grid-cols-3 gap-8">
+							{[
+								{
+									name: "Health Sciences",
+									icon: "❤️",
+									programs: ["Medicine", "Nursing", "Public Health"],
+								},
+								{
+									name: "Technology & Engineering",
+									icon: "💻",
+									programs: [
+										"Computer Science",
+										"Engineering",
+										"AI & Robotics",
+									],
+								},
+								{
+									name: "Natural & Applied Sciences",
+									icon: "⚛️",
+									programs: ["Biology", "Chemistry", "Physics"],
+								},
+							].map((school, index) => (
+								<div
+									key={index}
+									className="bg-white rounded-xl shadow-lg p-8 text-center hover-lift"
+								>
+									<div className="text-4xl mb-4">{school.icon}</div>
+									<h3 className="text-xl font-semibold text-gray-900 mb-4">
+										{school.name}
+									</h3>
+									<div className="space-y-2">
+										{school.programs.map((program, idx) => (
+											<div key={idx} className="text-gray-600">
+												{program}
+											</div>
+										))}
+									</div>
+								</div>
+							))}
+						</div>
+					</div>
+				</div>
+			);
+
+			// Research Page Component
+			const ResearchPage = () => (
+				<div className="py-24 bg-blue-600 text-white">
+					<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+						<div className="text-center mb-16">
+							<h1 className="text-4xl font-bold mb-4">Research & Innovation</h1>
+							<p className="text-xl text-blue-100 max-w-3xl mx-auto">
+								Groundbreaking research that addresses global challenges.
+							</p>
+						</div>
+						<div className="grid md:grid-cols-3 gap-8">
+							{[
+								{ title: "Cancer Research", icon: "🧬", funding: "$45M" },
+								{
+									title: "Artificial Intelligence",
+									icon: "🤖",
+									funding: "$38M",
+								},
+								{ title: "Climate Science", icon: "🌍", funding: "$32M" },
+							].map((area, index) => (
+								<div
+									key={index}
+									className="bg-white text-gray-900 rounded-xl p-6 hover-lift"
+								>
+									<div className="text-4xl mb-4">{area.icon}</div>
+									<h3 className="text-xl font-semibold mb-3">{area.title}</h3>
+									<div className="text-blue-600 font-bold">
+										{area.funding} funding
+									</div>
+								</div>
+							))}
+						</div>
+					</div>
+				</div>
+			);
+
+			// Admissions Page Component
+			const AdmissionsPage = () => (
+				<div className="py-24 bg-green-600 text-white">
+					<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+						<div className="text-center mb-16">
+							<h1 className="text-4xl font-bold mb-4">
+								Join Beacon University
+							</h1>
+							<p className="text-xl text-green-100 max-w-3xl mx-auto">
+								Begin your journey toward academic excellence and innovation.
+							</p>
+						</div>
+						<div className="grid md:grid-cols-4 gap-8">
+							{[
+								{ step: "1", title: "Submit Application", icon: "📝" },
+								{ step: "2", title: "Academic Records", icon: "📚" },
+								{ step: "3", title: "Essays & Recommendations", icon: "✍️" },
+								{ step: "4", title: "Review & Decision", icon: "✅" },
+							].map((step, index) => (
+								<div key={index} className="text-center">
+									<div className="text-4xl mb-4">{step.icon}</div>
+									<div className="w-8 h-8 bg-white text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 font-bold">
+										{step.step}
+									</div>
+									<h3 className="text-lg font-semibold">{step.title}</h3>
+								</div>
+							))}
+						</div>
+					</div>
+				</div>
+			);
+
+			// Student Life Page Component
+			const StudentLifePage = () => (
+				<div className="py-24 bg-purple-600 text-white">
+					<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+						<div className="text-center mb-16">
+							<h1 className="text-4xl font-bold mb-4">
+								Student Life at Beacon
+							</h1>
+							<p className="text-xl text-purple-100 max-w-3xl mx-auto">
+								Experience a vibrant campus community with endless
+								opportunities.
+							</p>
+						</div>
+						<div className="grid md:grid-cols-3 gap-8">
+							{[
+								{
+									category: "Student Organizations",
+									icon: "👥",
+									count: "200+",
+								},
+								{
+									category: "Athletics & Recreation",
+									icon: "🏃‍♂️",
+									count: "25 Teams",
+								},
+								{ category: "Arts & Culture", icon: "🎭", count: "50+ Events" },
+							].map((category, index) => (
+								<div
+									key={index}
+									className="bg-white text-gray-900 rounded-xl p-6 text-center hover-lift"
+								>
+									<div className="text-4xl mb-4">{category.icon}</div>
+									<h3 className="text-xl font-semibold mb-3">
+										{category.category}
+									</h3>
+									<div className="text-purple-600 font-bold">
+										{category.count}
+									</div>
+								</div>
+							))}
+						</div>
+					</div>
+				</div>
+			);
+
+			// News Page Component
+			const NewsPage = () => (
+				<div className="py-24 bg-indigo-600 text-white">
+					<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+						<div className="text-center mb-16">
+							<h1 className="text-4xl font-bold mb-4">News & Events</h1>
+							<p className="text-xl text-indigo-100 max-w-3xl mx-auto">
+								Stay updated with the latest news and upcoming events.
+							</p>
+						</div>
+						<div className="grid md:grid-cols-3 gap-8">
+							{[
+								{
+									title: "Breakthrough in Cancer Research",
+									date: "Jan 15, 2024",
+									category: "Research",
+								},
+								{
+									title: "New AI Ethics Institute Launched",
+									date: "Jan 10, 2024",
+									category: "Innovation",
+								},
+								{
+									title: "Record-Breaking Fundraising",
+									date: "Jan 8, 2024",
+									category: "University",
+								},
+							].map((article, index) => (
+								<div
+									key={index}
+									className="bg-white text-gray-900 rounded-xl p-6 hover-lift"
+								>
+									<div className="text-indigo-600 text-sm font-medium mb-2">
+										{article.category}
+									</div>
+									<h3 className="text-lg font-semibold mb-3">
+										{article.title}
+									</h3>
+									<div className="text-gray-500 text-sm">{article.date}</div>
+								</div>
+							))}
+						</div>
+					</div>
+				</div>
+			);
+
+			// Contact Page Component
+			const ContactPage = () => (
+				<div className="py-24 bg-teal-600 text-white">
+					<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+						<div className="text-center mb-16">
+							<h1 className="text-4xl font-bold mb-4">Contact Us</h1>
+							<p className="text-xl text-teal-100 max-w-3xl mx-auto">
+								Get in touch with us. We're here to help with any questions.
+							</p>
+						</div>
+						<div className="grid md:grid-cols-4 gap-8">
+							{[
+								{ title: "Main Office", icon: "🏢", contact: "(555) 123-4567" },
+								{
+									title: "Admissions",
+									icon: "🎓",
+									contact: "admissions@beacon.university",
+								},
+								{
+									title: "Research",
+									icon: "🔬",
+									contact: "research@beacon.university",
+								},
+								{
+									title: "Student Services",
+									icon: "👥",
+									contact: "students@beacon.university",
+								},
+							].map((office, index) => (
+								<div
+									key={index}
+									className="bg-white text-gray-900 rounded-xl p-6 text-center hover-lift"
+								>
+									<div className="text-4xl mb-4">{office.icon}</div>
+									<h3 className="text-lg font-semibold mb-3">{office.title}</h3>
+									<div className="text-teal-600 font-medium">
+										{office.contact}
+									</div>
+								</div>
+							))}
+						</div>
+					</div>
+				</div>
+			);
+
+			// Footer Component
+			const Footer = () => (
+				<footer className="bg-gray-900 text-white py-16">
+					<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+						<div className="text-center">
+							<div className="flex items-center justify-center space-x-3 mb-6">
+								<div className="w-12 h-12 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 rounded-lg flex items-center justify-center">
+									<span className="text-white font-bold text-xl">B</span>
+								</div>
+								<div>
+									<h3 className="text-xl font-bold">Beacon University</h3>
+									<p className="text-sm text-gray-400">
+										Health • Science • Technology
+									</p>
+								</div>
+							</div>
+							<p className="text-gray-400 mb-6">
+								A world-class institution dedicated to advancing health,
+								science, and technology.
+							</p>
+							<p className="text-gray-400">
+								© 2024 Beacon University. All rights reserved.
+							</p>
+						</div>
+					</div>
+				</footer>
+			);
+
+			// Chatbot Component (simplified for demo)
+			const Chatbot = () => {
+				const [isOpen, setIsOpen] = useState(false);
+				const [messages, setMessages] = useState([
+					{
+						text: "Hi! I'm your Beacon University assistant. How can I help you today?",
+						sender: "bot",
+					},
+				]);
+				const [inputValue, setInputValue] = useState("");
+
+				const handleSendMessage = () => {
+					if (!inputValue.trim()) return;
+
+					const userMessage = { text: inputValue, sender: "user" };
+					setMessages((prev) => [...prev, userMessage]);
+					setInputValue("");
+
+					// Simple response logic
+					setTimeout(() => {
+						const botResponse = {
+							text: "Thanks for your question! I'd be happy to help you learn more about Beacon University. For detailed information, please contact our admissions office.",
+							sender: "bot",
+						};
+						setMessages((prev) => [...prev, botResponse]);
+					}, 1000);
+				};
+
+				return (
+					<div className="fixed bottom-6 right-6 z-50">
+						<button
+							onClick={() => setIsOpen(!isOpen)}
+							className="bg-blue-600 hover:bg-blue-700 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover-lift"
+						>
+							<span className="text-2xl">{isOpen ? "✕" : "💬"}</span>
+						</button>
+
+						{isOpen && (
+							<div className="absolute bottom-20 right-0 w-80 h-96 bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col">
+								<div className="bg-blue-600 text-white p-4 rounded-t-lg">
+									<h3 className="font-semibold">Beacon Assistant</h3>
+									<p className="text-xs text-blue-100">
+										Ask me about admissions!
+									</p>
+								</div>
+
+								<div className="flex-1 p-4 overflow-y-auto space-y-3">
+									{messages.map((message, index) => (
+										<div
+											key={index}
+											className={`flex items-start space-x-2 ${
+												message.sender === "user" ? "justify-end" : ""
+											}`}
+										>
+											{message.sender === "bot" && (
+												<div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+													<span className="text-xs">🤖</span>
+												</div>
+											)}
+											<div
+												className={`rounded-lg p-3 max-w-xs ${
+													message.sender === "user"
+														? "bg-blue-600 text-white"
+														: "bg-gray-100"
+												}`}
+											>
+												<p className="text-sm">{message.text}</p>
+											</div>
+										</div>
+									))}
+								</div>
+
+								<div className="p-4 border-t border-gray-200">
+									<div className="flex space-x-2">
+										<input
+											value={inputValue}
+											onChange={(e) => setInputValue(e.target.value)}
+											onKeyPress={(e) =>
+												e.key === "Enter" && handleSendMessage()
+											}
+											type="text"
+											placeholder="Ask about admissions..."
+											className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+										/>
+										<button
+											onClick={handleSendMessage}
+											className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+										>
+											Send
+										</button>
+									</div>
+								</div>
+							</div>
+						)}
+					</div>
+				);
+			};
+
+			// Render the app
+			ReactDOM.render(<App />, document.getElementById("root"));
+		</script>
+	</body>
+</html>
